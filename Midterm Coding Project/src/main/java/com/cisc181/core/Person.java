@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.cisc181.Exception.*;
 
 /*
  * comment
@@ -46,10 +47,14 @@ public abstract class Person implements java.io.Serializable {
 		return DOB;
 	}
 
-	public void setDOB(Date DOB){
+	public void setDOB(Date DOB) throws PersonException {
+		Calendar dob = Calendar.getInstance();
+		Calendar now = Calendar.getInstance();
+		dob.setTime(DOB);
+		if (now.get(Calendar.YEAR) - dob.get(Calendar.YEAR) > 100) {
+			throw new PersonException(null);
+		}
 		this.DOB = DOB;
-		
-		
 	}
 
 	public void setAddress(String newAddress) {
@@ -60,7 +65,13 @@ public abstract class Person implements java.io.Serializable {
 		return address;
 	}
 
-	public void setPhone(String newPhone_number) {
+	public void setPhone(String newPhone_number) throws PersonException {
+		String regex = "^\\(?([0-9]{3})\\)?[-.\\s]?([0-9]{3})[-.\\s]?([0-9]{4})$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(newPhone_number);
+		if (matcher.matches() == false) {
+			throw new PersonException(null);
+		}
 		phone_number = newPhone_number;
 	
 	}
@@ -81,7 +92,7 @@ public abstract class Person implements java.io.Serializable {
 	 * Constructors No Arg Constructor
 	 */
 	public Person() {
-
+	
 	}
 
 	/*
@@ -89,7 +100,7 @@ public abstract class Person implements java.io.Serializable {
 	 */
 
 	public Person(String FirstName, String MiddleName, String LastName,
-			Date DOB, String Address, String Phone_number, String Email)
+			Date DOB, String Address, String Phone_number, String Email) throws PersonException 
 	{
 		this.FirstName = FirstName;
 		this.MiddleName = MiddleName;
@@ -100,6 +111,7 @@ public abstract class Person implements java.io.Serializable {
 		this.email_address = Email;
 		
 	}
+
 
 	public void PrintName() {
 		System.out.println(this.FirstName + ' ' + this.MiddleName + ' '
